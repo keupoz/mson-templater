@@ -1,0 +1,17 @@
+html
+    head
+        title Mson Template Generator
+
+        link(rel="stylesheet", href="index.scss")
+
+    body
+        h1 Mson template generator
+
+        h2 Load file ...
+        input#json-input(type="file", accept="application/json")
+
+        h2 ... or paste JSON
+        #json-parse-error
+        textarea#json-parse-output
+
+        script(src="scripts/index.ts")
