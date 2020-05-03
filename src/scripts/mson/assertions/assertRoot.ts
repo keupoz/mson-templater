@@ -6,7 +6,7 @@ import { assertNumber, assertType } from "./assertType";
 import { walkObject } from "./walks";
 
 export function assertRoot(path: string, value: any): asserts value is IRootModel {
-    assertType(path, Object, value);
+    assertType(path, value, Object);
 
     walkObject(path, value, (path, item, property) => {
         switch (property) {

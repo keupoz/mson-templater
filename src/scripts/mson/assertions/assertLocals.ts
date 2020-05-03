@@ -4,14 +4,14 @@ import { walkObject } from "./walks";
 
 const ALLOWED_OPERATORS: IOperator[] = ["+", "-", "*", "/", "^"];
 
-function assertVariable(path: string, value: string) {
+export function assertVariable(path: string, value: string) {
     if (!value.startsWith("#")) {
         throw new Error(`Variable "${path}" must start with #. Got "${value}"`);
     }
 }
 
 function assertOperator(path: string, value: any): asserts value is IOperator {
-    assertType(path, String, value);
+    assertType(path, value, String);
 
     if (ALLOWED_OPERATORS.indexOf(value as any) == -1) {
         throw new Error(`Operator "${path}" must be one of ${ALLOWED_OPERATORS.map((o) => `"${o}"`).join(", ")}. Got "${value}"`);
@@ -39,7 +39,7 @@ function assertExpression(path: string, value: any): asserts value is IExpressio
 }
 
 export function assertLocals(path: string, value: any): asserts value is ILocals {
-    assertType(path, Object, value);
+    assertType(path, value, Object);
 
     walkObject(path, value, (path, item) => {
         assertExpression(path, item);

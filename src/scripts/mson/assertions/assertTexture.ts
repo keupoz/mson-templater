@@ -10,7 +10,7 @@ export function assertTexture(path: string, value: any): asserts value is ITextu
             assertInteger(path, item);
         });
     } else {
-        assertType(path, Object, value);
+        assertType(path, value, Object);
 
         walkObject(path, value, (path, item, property) => {
             switch (property) {

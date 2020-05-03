@@ -8,7 +8,7 @@ export enum ArrayLengthAssertType {
     MOREOREQUAL = "more or equal"
 }
 
-export function assertType<T>(path: string, typeConstructor: TypeConstructor<T>, value: any): asserts value is T {
+export function assertType<T>(path: string, value: any, typeConstructor: TypeConstructor<T>): asserts value is T {
     if (value === null) {
         throw new TypeError(`"${path}" must be type of ${typeConstructor.name}. Got null`);
     }
@@ -19,7 +19,7 @@ export function assertType<T>(path: string, typeConstructor: TypeConstructor<T>,
 }
 
 export function assertNumber(path: string, value: any): asserts value is number {
-    assertType(path, Number, value);
+    assertType(path, value, Number);
 
     if (isNaN(value) || !isFinite(value)) {
         throw new TypeError(`"${path}" must be finite number. Got ${value}`);

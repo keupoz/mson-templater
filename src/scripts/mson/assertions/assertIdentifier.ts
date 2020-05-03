@@ -29,7 +29,7 @@ function isPathValid(path: string): boolean {
 }
 
 export function assertIdentifier(path: string, value: any): asserts value is string {
-    assertType(path, String, value);
+    assertType(path, value, String);
 
     const strings = split(value, ":");
     const expression = (isNamespaceValid(strings[0].length == 0 ? "minecraft" : strings[0]) && isPathValid(strings[1]));
