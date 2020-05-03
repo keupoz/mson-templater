@@ -41,7 +41,7 @@ function assertExpression(path: string, value: any): asserts value is IExpressio
 export function assertLocals(path: string, value: any): asserts value is ILocals {
     assertType(path, value, Object);
 
-    walkObject(path, value, (path, item) => {
-        assertExpression(path, item);
+    walkObject(path, value, (path, value) => {
+        assertExpression(path, value);
     });
 }

@@ -4,7 +4,7 @@ export function walkArray(path: string, array: any[], callback: (path: string, i
     });
 }
 
-export function walkObject(path: string, object: Record<string, any>, callback: (path: string, item: any, property: string) => void) {
+export function walkObject(path: string, object: Record<string, any>, callback: (path: string, value: any, property: string) => void) {
     Object.keys(object).forEach((property) => {
         callback(`${path}.${property}`, object[property], property);
     });

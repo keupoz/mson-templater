@@ -12,12 +12,12 @@ export function assertTexture(path: string, value: any): asserts value is ITextu
     } else {
         assertType(path, value, Object);
 
-        walkObject(path, value, (path, item, property) => {
+        walkObject(path, value, (path, value, property) => {
             switch (property) {
                 case "u":
                 case "v":
                 case "w":
-                case "h": assertInteger(path, item); break;
+                case "h": assertInteger(path, value); break;
             }
         });
     }

@@ -8,12 +8,12 @@ import { walkObject } from "./walks";
 export function assertRoot(path: string, value: any): asserts value is IRootModel {
     assertType(path, value, Object);
 
-    walkObject(path, value, (path, item, property) => {
+    walkObject(path, value, (path, value, property) => {
         switch (property) {
-            case "parent": assertIdentifier(path, item); break;
-            case "scale": assertNumber(path, item); break;
-            case "texture": assertTexture(path, item); break;
-            case "locals": assertLocals(path, item); break;
+            case "parent": assertIdentifier(path, value); break;
+            case "scale": assertNumber(path, value); break;
+            case "texture": assertTexture(path, value); break;
+            case "locals": assertLocals(path, value); break;
         }
     });
 }
