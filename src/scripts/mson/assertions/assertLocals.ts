@@ -2,7 +2,7 @@ import { IExpression, ILocals, IOperator } from "../Mson";
 import { ArrayLengthAssertType, assertArrayLength, assertNumber, assertType } from "./assertType";
 import { walkObject } from "./walks";
 
-const ALLOWED_OPERATORS: IOperator[] = ["+", "-", "*", "/", "/"];
+const ALLOWED_OPERATORS: IOperator[] = ["+", "-", "*", "/", "^"];
 
 function assertVariable(path: string, value: string) {
     if (!value.startsWith("#")) {
@@ -13,7 +13,7 @@ function assertVariable(path: string, value: string) {
 function assertOperator(path: string, value: any): asserts value is IOperator {
     assertType(path, String, value);
 
-    if (ALLOWED_OPERATORS.indexOf(value as any) !== -1) {
+    if (ALLOWED_OPERATORS.indexOf(value as any) == -1) {
         throw new Error(`Operator "${path}" must be one of ${ALLOWED_OPERATORS.map((o) => `"${o}"`).join(", ")}. Got "${value}"`);
     }
 }

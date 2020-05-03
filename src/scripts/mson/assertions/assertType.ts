@@ -9,6 +9,10 @@ export enum ArrayLengthAssertType {
 }
 
 export function assertType<T>(path: string, typeConstructor: TypeConstructor<T>, value: any): asserts value is T {
+    if (value === null) {
+        throw new TypeError(`"${path}" must be type of ${typeConstructor.name}. Got null`);
+    }
+
     if (value.constructor !== typeConstructor) {
         throw new TypeError(`"${path}" must be type of ${typeConstructor.name}. Got ${value.constructor.name} "${value}"`);
     }
@@ -42,6 +46,6 @@ export function assertArrayLength(path: string, array: any[], type: ArrayLengthA
     }
 
     if (!expression) {
-        throw new TypeError(`Array "${path}" length must be ${type}. Got ${array.length}`);
+        throw new TypeError(`Array "${path}" length must be ${value}. Got ${array.length}`);
     }
 }
