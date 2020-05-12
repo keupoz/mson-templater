@@ -1,0 +1,1 @@
+{"mappings":"AAAA,SACI,cAAA,CACA,eCCJ,CDEA,kBACI,YAAA,CACA,eAAA,CACA,kBCCJ","sources":["src/index.scss","<input css 1>"],"names":[],"version":3,"file":"mson-templater.3cad3178.css.map","sourcesContent":["textarea {\n    min-width: 50em;\n    min-height: 30em;\n}\n\n#json-parse-error {\n    color: tomato;\n    font-weight: bold;\n    white-space: normal;\n}\n",null]}
