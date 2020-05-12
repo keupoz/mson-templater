@@ -8,10 +8,12 @@ html
         h1 Mson template generator
 
         h2 Load file ...
-        input#json-input(type="file", accept="application/json")
+        input#json-input-file(type="file", accept="application/json")
 
         h2 ... or paste JSON
-        #json-parse-error
-        textarea#json-parse-output
+        textarea#json-input-text(spellcheck="false")
+
+        pre#json-parse-error
+        pre#json-parse-output
 
         script(src="scripts/index.ts")

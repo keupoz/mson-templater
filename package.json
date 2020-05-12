@@ -2,16 +2,19 @@
     "name": "mson-templater",
     "version": "1.0.0",
     "description": "MSON templater",
-    "main": "index.js",
+    "private": true,
     "scripts": {
+        "build": "parcel build src/index.pug --no-cache",
         "dev": "parcel serve src/index.pug --no-cache"
     },
     "author": "keupoz",
     "license": "MIT",
     "dependencies": {
-        "ts-serializable": "^1.1.24"
+        "@mojotech/json-type-validation": "^3.1.0",
+        "prettier": "^2.0.5"
     },
     "devDependencies": {
+        "@types/prettier": "^2.0.0",
         "parcel": "^2.0.0-alpha.3.2",
         "pug": "^2.0.4",
         "sass": "^1.26.5",

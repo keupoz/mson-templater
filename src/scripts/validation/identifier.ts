@@ -1,5 +1,3 @@
-import { assertType } from "./assertType";
-
 function split(id: string, delimiter: string): [string, string] {
     const strings: [string, string] = ["minecraft", id];
     const i = id.indexOf(delimiter);
@@ -28,13 +26,7 @@ function isPathValid(path: string): boolean {
         .every((c) => (c == 95 || c == 45 || (c >= 97 && c <= 122) || (c >= 48 && c <= 57) || c == 47 || c == 46));
 }
 
-export function assertIdentifier(path: string, value: any): asserts value is string {
-    assertType(path, value, String);
-
-    const strings = split(value, ":");
-    const expression = (isNamespaceValid(strings[0].length == 0 ? "minecraft" : strings[0]) && isPathValid(strings[1]));
-
-    if (!expression) {
-        throw new Error(`Identifier "${path}" must be valid. Got "${value}"`);
-    }
+export function validateIdentifier(id: string): boolean {
+    const strings = split(id, ":");
+    return (isNamespaceValid(strings[0].length == 0 ? "minecraft" : strings[0]) && isPathValid(strings[1]));
 }

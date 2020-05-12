@@ -1,23 +1,44 @@
-import { assertRoot } from "./mson/assertions/assertRoot";
+import { isDecoderError } from "@mojotech/json-type-validation";
+import parserBabel from "prettier/parser-babel";
+import { format, formatWithCursor } from "prettier/standalone";
 import { querySelector } from "./util";
+import { model } from "./validation/model";
 
-const $input = querySelector("#json-input", HTMLInputElement);
-const $error = querySelector("#json-parse-error", HTMLDivElement);
-const $output = querySelector("#json-parse-output", HTMLTextAreaElement);
+const $input = querySelector("#json-input-file", HTMLInputElement);
+const $text = querySelector("#json-input-text", HTMLTextAreaElement);
+const $error = querySelector("#json-parse-error", HTMLPreElement);
+const $output = querySelector("#json-parse-output", HTMLPreElement);
 
-function loadJSON(text: string) {
+function loadJSON(text: string): boolean {
     try {
-        const json = JSON.parse(text);
-        assertRoot("root", json);
-        $output.value = JSON.stringify(json, null, 2);
+        const rawJson = JSON.parse(text);
+        const json = model.runWithException(rawJson);
+
+        const formatted = format(JSON.stringify(json, null, 2), {
+            parser: "json",
+            plugins: [parserBabel],
+            useTabs: false,
+            tabWidth: 4,
+            endOfLine: "lf"
+        });
+
+        $output.innerText = formatted;
         $error.innerHTML = "";
+
+        return true;
     } catch (err) {
         if (err instanceof Error) {
             $error.innerHTML = err.message;
+        } else if (isDecoderError(err)) {
+            const { kind, at, message } = err;
+            console.error(err);
+            $error.innerHTML = `${kind} at ${at}: ${message}`;
         } else if (typeof err == "string") {
             $error.innerHTML = err;
         }
     }
+
+    return false;
 }
 
 $input.addEventListener("change", () => {
@@ -38,6 +59,18 @@ $input.addEventListener("change", () => {
     F.readAsText(file);
 });
 
-$output.addEventListener("input", () => {
-    loadJSON($output.value);
+$text.addEventListener("input", () => {
+    if (loadJSON($text.value)) {
+        const { formatted, cursorOffset } = formatWithCursor($text.value, {
+            cursorOffset: $text.selectionStart,
+            parser: "json",
+            plugins: [parserBabel],
+            useTabs: false,
+            tabWidth: 4,
+            endOfLine: "lf"
+        });
+
+        $text.value = formatted;
+        $text.setSelectionRange(cursorOffset, cursorOffset);
+    }
 });

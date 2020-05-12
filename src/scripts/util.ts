@@ -1,4 +1,5 @@
-import { Constructor } from "./types";
+export type Constructor<T> = { new(): T };
+export type TypeConstructor<T> = { (): T };
 
 export function querySelector<T extends Element>(selector: string, type: Constructor<T>): T {
     const element = document.querySelector(selector);

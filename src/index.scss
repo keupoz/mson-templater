@@ -2,3 +2,9 @@ textarea {
     min-width: 50em;
     min-height: 30em;
 }
+
+#json-parse-error {
+    color: tomato;
+    font-weight: bold;
+    white-space: normal;
+}
