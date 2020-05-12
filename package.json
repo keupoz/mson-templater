@@ -7,6 +7,11 @@
         "build": "parcel build src/index.pug --no-cache",
         "dev": "parcel serve src/index.pug --no-cache"
     },
+    "targets": {
+        "browser": {
+            "publicUrl": "./"
+        }
+    },
     "author": "keupoz",
     "license": "MIT",
     "dependencies": {
