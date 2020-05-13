@@ -8,20 +8,26 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout 🛎️
+      - name: 🛎️ Checkout
         uses: actions/checkout@v2
         with:
           persist-credentials: false
 
-      - name: Install and Build 🔧
+      - name: 🔧 Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "13"
+
+      - name: 🔧 Install and Build
         run: |
           npm install
           npm run build
 
-      - name: Deploy 🚀
+      - name: 🚀 Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: dist # The folder the action should deploy.
+          BRANCH: gh-pages
+          FOLDER: dist
