@@ -1,6 +1,4 @@
 import { isDecoderError } from "@mojotech/json-type-validation";
-import parserBabel from "prettier/parser-babel";
-import { format, formatWithCursor } from "prettier/standalone";
 import { querySelector } from "./util";
 import { model } from "./validation/model";
 
@@ -14,13 +12,7 @@ function loadJSON(text: string): boolean {
         const rawJson = JSON.parse(text);
         const json = model.runWithException(rawJson);
 
-        const formatted = format(JSON.stringify(json, null, 2), {
-            parser: "json",
-            plugins: [parserBabel],
-            useTabs: false,
-            tabWidth: 4,
-            endOfLine: "lf"
-        });
+        const formatted = JSON.stringify(json, null, 4);
 
         $output.innerText = formatted;
         $error.innerHTML = "";
@@ -59,18 +51,18 @@ $input.addEventListener("change", () => {
     F.readAsText(file);
 });
 
-$text.addEventListener("input", () => {
-    if (loadJSON($text.value)) {
-        const { formatted, cursorOffset } = formatWithCursor($text.value, {
-            cursorOffset: $text.selectionStart,
-            parser: "json",
-            plugins: [parserBabel],
-            useTabs: false,
-            tabWidth: 4,
-            endOfLine: "lf"
-        });
+$text.addEventListener("input", function () {
+    if (loadJSON(this.value)) {
+        const selectionStart = this.selectionStart,
+            selectionEnd = this.selectionEnd;
 
-        $text.value = formatted;
-        $text.setSelectionRange(cursorOffset, cursorOffset);
+        const originalLength = this.value.length;
+
+        this.value = JSON.stringify(JSON.parse(this.value), null, 4);
+
+        const newLength = this.value.length;
+
+        const deltaLength = newLength - originalLength;
+        this.setSelectionRange(selectionStart + deltaLength, selectionEnd + deltaLength);
     }
 });
