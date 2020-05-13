@@ -1,33 +1,41 @@
-import { array, boolean, constant, Decoder, DecoderObject, intersection, lazy, number, object, optional, string, tuple, union } from "@mojotech/json-type-validation";
+import { array, boolean, constant, Decoder, DecoderObject, fail, intersection, lazy, number, object, optional, string, tuple, union } from "@mojotech/json-type-validation";
 import { Box, ChildComponent, CompactPlane, CompactPlaneMaybeArray, Component, Cone, Cuboid, Face, Facing, ParentComponent, Planar, Plane, Quads, Slot, Vertex } from "../Mson";
 import { model } from "./model";
 import { identifier, integer, locals, texture, variable, vector2, vector3 } from "./partials";
 
-export const component: <T>(decoders: DecoderObject<T>) => Decoder<Component & T> = (decoders) => intersection(
+export const component: <T>(decoders: DecoderObject<T>, type?: string) => Decoder<Component & T> = (decoders, type) => intersection(
     object({
-        type: optional(identifier)
+        type: !type ? identifier : optional(identifier).map((value) => {
+            return value || type;
+        })
     }),
     object(decoders)
 );
 
-export const parentComponent = component({})
-    .andThen((value): Decoder<ParentComponent> => {
-        switch (value.type) {
-            case "mson:planar": return planar;
-            case "mson:slot": return slot;
-            default: return cuboid;
-        }
-    });
+const componentSelector = <T extends Component>(decoders: Record<string, () => Decoder<T>>) => {
+    return (defaultComponent: string) => object({
+        type: optional(identifier)
+    }).andThen((value): Decoder<T> => {
+        const type = value.type || defaultComponent;
 
-export const childComponent = component({})
-    .andThen((value): Decoder<ChildComponent> => {
-        switch (value.type) {
-            case "mson:plane": return plane;
-            case "mson:cone": return cone;
-            case "mson:quads": return quads;
-            default: return box;
-        }
+        if (type in decoders) {
+            return decoders[type]();
+        } else return fail(`expected a known component type, got "${type}"`);
     });
+};
+
+export const parentComponent = componentSelector<ParentComponent>({
+    "mson:compound": () => cuboid,
+    "mson:planar": () => planar,
+    "mson:slot": () => slot
+});
+
+export const childComponent = componentSelector<ChildComponent>({
+    "mson:box": () => box,
+    "mson:plane": () => plane,
+    "mson:cone": () => cone,
+    "mson:quads": () => quads,
+});
 
 export const cuboid: Decoder<Cuboid> = component({
     center: optional(vector3(variable)),
@@ -37,9 +45,9 @@ export const cuboid: Decoder<Cuboid> = component({
     visible: optional(boolean()),
     texture: optional(texture),
     name: optional(string()),
-    cubes: optional(array(childComponent)),
-    children: optional(array(parentComponent))
-});
+    cubes: optional(array(childComponent("mson:box"))),
+    children: optional(array(parentComponent("mson:compound")))
+}, "mson:compound");
 
 const compactPlane: Decoder<CompactPlane> = union(
     tuple([number(), number(), number(), number(), number()]),
@@ -81,7 +89,7 @@ export const box: Decoder<Box> = component({
     texture: optional(texture),
     stretch: optional(vector3(number())),
     mirror: optional(boolean())
-});
+}, "mson:box");
 
 export const facing: Decoder<Facing> = union(
     constant("none"),

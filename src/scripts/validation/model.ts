@@ -27,6 +27,6 @@ export const model = object().andThen((value) => {
         scale: optional(number()),
         texture: optional(texture),
         locals: optional(locals),
-        components: array(parentComponent)
+        components: array(parentComponent("mson:compound"))
     });
 });

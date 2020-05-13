@@ -26,7 +26,7 @@ export type Expression = Variable | [Expression, Operator, Expression];
 export type Locals = Record<string, Expression>;
 
 export interface Component {
-    type?: string;
+    type: string;
 }
 
 export type ParentComponent = Cuboid | Planar | Slot;
