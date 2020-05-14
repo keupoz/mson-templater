@@ -1,7 +1,7 @@
 import { array, boolean, constant, Decoder, DecoderObject, fail, intersection, lazy, number, object, optional, string, tuple, union } from "@mojotech/json-type-validation";
 import { Box, ChildComponent, CompactPlane, CompactPlaneMaybeArray, Component, Cone, Cuboid, Face, Facing, ParentComponent, Planar, Plane, Quads, Slot, Vertex } from "../Mson";
 import { model } from "./model";
-import { identifier, integer, locals, texture, variable, vector2, vector3 } from "./partials";
+import { identifier, integer, locals, reference, texture, variable, vector2, vector3 } from "./partials";
 
 export const component: <T>(decoders: DecoderObject<T>, type?: string) => Decoder<Component & T> = (decoders, type) => intersection(
     object({
@@ -13,24 +13,27 @@ export const component: <T>(decoders: DecoderObject<T>, type?: string) => Decode
 );
 
 const componentSelector = <T extends Component>(decoders: Record<string, () => Decoder<T>>) => {
-    return (defaultComponent: string) => object({
-        type: optional(identifier)
-    }).andThen((value): Decoder<T> => {
-        const type = value.type || defaultComponent;
+    return (defaultComponent: string) => union(
+        reference,
+        object({
+            type: optional(identifier)
+        }).andThen((value): Decoder<T> => {
+            const type = value.type || defaultComponent;
 
-        if (type in decoders) {
-            return decoders[type]();
-        } else return fail(`expected a known component type, got "${type}"`);
-    });
+            if (type in decoders) {
+                return decoders[type]();
+            } else return fail(`expected a known component type, got "${type}"`);
+        })
+    );
 };
 
-export const parentComponent = componentSelector<ParentComponent>({
+export const parentComponent = componentSelector<Exclude<ParentComponent, string>>({
     "mson:compound": () => cuboid,
     "mson:planar": () => planar,
     "mson:slot": () => slot
 });
 
-export const childComponent = componentSelector<ChildComponent>({
+export const childComponent = componentSelector<Exclude<ChildComponent, string>>({
     "mson:box": () => box,
     "mson:plane": () => plane,
     "mson:cone": () => cone,
@@ -50,8 +53,8 @@ export const cuboid: Decoder<Cuboid> = component({
 }, "mson:compound");
 
 const compactPlane: Decoder<CompactPlane> = union(
-    tuple([number(), number(), number(), number(), number()]),
-    tuple([number(), number(), number(), number(), number(), number(), number()])
+    tuple([number(), number(), number(), integer, integer]),
+    tuple([number(), number(), number(), integer, integer, variable, variable])
 );
 
 const compactPlaneMaybeArray: Decoder<CompactPlaneMaybeArray> = union(

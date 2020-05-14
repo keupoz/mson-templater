@@ -7,17 +7,18 @@ const operator: Decoder<Operator> = union(
     constant("-"),
     constant("*"),
     constant("/"),
-    constant("^")
+    constant("^"),
+    constant("%")
 );
 
-const variableReference = string().where((value) => /^#\w+/.test(value), "expected a valid variable reference");
+export const reference = string().where((value) => /^#\w+/.test(value), "expected a valid reference");
 
 export const identifier = string().where((value) => validateIdentifier(value), "expected a valid identifier");
 
 export const integer = number().where((value) => (value | 0) == value, "expected integer");
 
 export const variable: Decoder<Variable> = union(
-    variableReference,
+    reference,
     number()
 );
 
@@ -43,12 +44,14 @@ export const texture: Decoder<Texture> = union(
 );
 
 export const vector2: <T>(decoder: Decoder<T>) => Decoder<Vector2<T>> = <T>(decoder: Decoder<T>) => union(
+    decoder.map((value) => [value, value]),
     constant<[]>([]),
     tuple([decoder]),
     tuple([decoder, decoder])
 );
 
 export const vector3: <T>(decoder: Decoder<T>) => Decoder<Vector3<T>> = <T>(decoder: Decoder<T>) => union(
+    decoder.map((value) => [value, value, value]),
     constant<[]>([]),
     tuple([decoder]),
     tuple([decoder, decoder]),

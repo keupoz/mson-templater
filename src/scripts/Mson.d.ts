@@ -19,7 +19,7 @@ export type Texture =
         h?: number
     };
 
-export type Operator = "+" | "-" | "*" | "/" | "^";
+export type Operator = "+" | "-" | "*" | "/" | "^" | "%";
 export type Variable = number | string;
 export type Expression = Variable | [Expression, Operator, Expression];
 
@@ -29,8 +29,8 @@ export interface Component {
     type: string;
 }
 
-export type ParentComponent = Cuboid | Planar | Slot;
-export type ChildComponent = Box | Plane | Cone | Quads;
+export type ParentComponent = Cuboid | Planar | Slot | string;
+export type ChildComponent = Box | Plane | Cone | Quads | string;
 
 export type Facing = "none" | "up" | "down" | "west" | "east" | "north" | "south";
 
@@ -46,12 +46,12 @@ export interface Cuboid extends Component {
     texture?: Texture;
     name?: string;
     cubes?: ChildComponent[];
-    children?: Component[];
+    children?: ParentComponent[];
 }
 
 export type CompactPlane =
     | [number, number, number, number, number]
-    | [number, number, number, number, number, number, number];
+    | [number, number, number, number, number, Variable, Variable];
 
 export type CompactPlaneMaybeArray = CompactPlane | CompactPlane[];
 
